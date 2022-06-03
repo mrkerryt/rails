@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import * as Constants from '../constants'
 import eventsCenter from "../controllers/events_center";
 import LevelController from "../controllers/level_controller";
-import CircleController from "../controllers/circle_contoller";
+import CircleRenderer from "../ui/circle_renderer";
 
 export default class Game extends Phaser.Scene {
     _level
@@ -17,7 +17,7 @@ export default class Game extends Phaser.Scene {
     _coinSize
     _eventsCenter
     _levelsController
-    _circleController
+    _circleRenderer
 
     constructor() {
         super('Game');
@@ -30,7 +30,7 @@ export default class Game extends Phaser.Scene {
         this.cameras.main.setBackgroundColor(Constants.GREEN.hex)
         this._eventsCenter = eventsCenter
         this._levelsController = new LevelController()
-        this._circleController = new CircleController(this)
+        this._circleRenderer = new CircleRenderer(this)
 
         this.scene.run('UI')
         this.cameras.main.fadeIn(
@@ -268,10 +268,10 @@ export default class Game extends Phaser.Scene {
         let colour = Constants.convert(coin.getColour())
         let visibility = coin.getVisibility()
 
-        let circle = this._circleController
-            .findOrCreate(railId, coin.getNumber(), x, y, this._coinSize, colour)
+        let circle = this._circleRenderer
+            .findOrCreateCircle(railId, coin.getNumber(), x, y, this._coinSize, colour)
 
-        this._circleController
+        this._circleRenderer
             .updateCircle(circle, x, y, this._coinSize, colour, visibility)
     }
 

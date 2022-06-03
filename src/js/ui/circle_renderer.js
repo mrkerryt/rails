@@ -3,7 +3,7 @@ import * as Constants from '../constants'
 /**
  * Handles the Circle Shapes that are drawn to represent each coin
  */
-export default class CircleController {
+export default class CircleRenderer {
     /** @var {Phaser.Scene} ctx */
     _ctx
     _railA
@@ -27,7 +27,7 @@ export default class CircleController {
      * @param colour
      * @returns {*}
      */
-    findOrCreate(railId, coinNumber, x, y, coinSize, colour) {
+    findOrCreateCircle(railId, coinNumber, x, y, coinSize, colour) {
         let rail
         if (railId === Constants.RAIL_A) {
             rail = this._railA
