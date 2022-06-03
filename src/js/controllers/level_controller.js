@@ -8,22 +8,22 @@ export default class LevelController {
     _progress
 
     constructor() {
-        this._loadProgress()
+        this._loadUserProgress()
     }
 
     /**
      * When you complete a level you are awarded stars and your progress
      * is saved to local storage
      * @param {number} levelId
-     * @param {number} stars
+     * @param {number} starsEarned
      */
-    saveStars(levelId = 1, stars = 1) {
+    saveStars(levelId = 1, starsEarned = 1) {
         let currentStars = this._getStars(levelId)
-        if (stars > currentStars) {
-            currentStars = stars
+        if (starsEarned > currentStars) {
+            currentStars = starsEarned
         }
         this._progress[levelId] = currentStars
-        this._saveProgress(this._progress)
+        this._saveUserProgress(this._progress)
     }
 
     getLevelData() {
@@ -38,7 +38,7 @@ export default class LevelController {
                 name: 'Red Top',
                 description: 'Create a row of red coins along the top bar',
                 stars: this._getStars(2),
-                locked: this._isLocked(2)
+                locked: this._isLevelLocked(2)
             }
         }
     }
@@ -60,7 +60,7 @@ export default class LevelController {
      * @param levelId
      * @private
      */
-    _isLocked(levelId = 1) {
+    _isLevelLocked(levelId = 1) {
         if (levelId <= 1) {
             return false
         }
@@ -83,18 +83,18 @@ export default class LevelController {
      * Load progress but if it's not set then set it
      * to an empty object and save it
      */
-    _loadProgress() {
+    _loadUserProgress() {
         this._progress = JSON.parse(localStorage.getItem('progress'))
         if (this._progress == null) {
             this._progress = {}
-            this._saveProgress(this._progress)
+            this._saveUserProgress(this._progress)
         }
     }
 
     /**
      * @param progress
      */
-    _saveProgress(progress = '') {
+    _saveUserProgress(progress = '') {
         this._progress = progress
         localStorage.setItem('progress', JSON.stringify(progress))
     }
