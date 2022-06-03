@@ -13,5 +13,8 @@ module.exports = {
     rootDir: './',
     transform: {
         '^.+\\.js?$': 'babel-jest',
-    }
+    },
+    setupFiles: [
+        "jest-canvas-mock"
+    ]
 }

@@ -8,11 +8,6 @@
     "build": "webpack --config webpack.config.js",
     "app": "webpack serve --config webpack.config.js"
   },
-  "jest": {
-    "setupFiles": [
-      "jest-canvas-mock"
-    ]
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
