@@ -1,9 +1,9 @@
 import * as Constants from '../constants'
+
 /**
  *
  */
 export default class Button {
-
 
     constructor(x, y, label, scene, callback) {
         let fontSize = (window.screen.availHeight * 0.075)

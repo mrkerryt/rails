@@ -1,5 +1,3 @@
-import * as Constants from '../constants'
-
 /**
  * Sequence of commands used for shuffling rails and undo operations
  */

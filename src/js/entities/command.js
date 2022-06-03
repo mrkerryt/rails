@@ -1,5 +1,8 @@
 import * as Constants from '../constants'
 
+/**
+ * Represents the rotation of one of the rails, which direction and how far
+ */
 export default class Command {
     _railId
     _direction

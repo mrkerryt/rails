@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import * as Constants from './constants'
+
 import Boot from './scenes/boot'
 import Loading from './scenes/loading'
 import Title from './scenes/title'
@@ -46,5 +46,3 @@ let config = {
 }
 
 let game = new Phaser.Game(config);
-
-

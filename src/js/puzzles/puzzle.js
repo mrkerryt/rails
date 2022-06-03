@@ -1,5 +1,3 @@
-import Game from '../scenes/game'
-
 /**
  * A puzzle can have multiple solutions
  */
