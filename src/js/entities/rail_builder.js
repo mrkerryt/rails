@@ -1,5 +1,6 @@
 import * as Constants from '../constants'
 import Coin from './coin'
+import Rail from "./rail";
 
 /**
  * Builds an array of coins, complete with their X and Y
@@ -13,8 +14,16 @@ export default class RailBuilder {
     _positionY
     _scale
     _unit
+    _intersectionIdsRailA
+    _intersectionIdsRailB
 
-    constructor(){
+    constructor(
+        intersectionIdsRailA,
+        intersectionIdsRailB,
+    ){
+        this._intersectionIdsRailA = intersectionIdsRailA
+        this._intersectionIdsRailB = intersectionIdsRailB
+
         // window.devicePixelRatio
         this._unit = 50
 
@@ -26,7 +35,7 @@ export default class RailBuilder {
 
     /**
      * @param {number} railId
-     * @returns {Coin[]}
+     * @returns {Rail}
      */
     build(railId = Constants.RAIL_A) {
         let railPoints = this._getRailPoints(
@@ -65,13 +74,20 @@ export default class RailBuilder {
                 )
             )
         }
-    }
 
-    /**
-     * @returns {Coin[]}
-     */
-    getCoins() {
-        return this._coins
+        let intersectionIDs = null
+        if (railId === Constants.RAIL_A) {
+            intersectionIDs = this._intersectionIdsRailA
+        } else {
+            intersectionIDs = this._intersectionIdsRailB
+        }
+
+        return new Rail(
+            railId,
+            this._coins,
+            intersectionIDs,
+            this._railCurve
+        )
     }
 
     /**
@@ -342,12 +358,5 @@ export default class RailBuilder {
                     new Phaser.Math.Vector2(to.x, to.y)
                 );
         }
-    }
-
-    /**
-     * @returns {Phaser.Curves.Curve}
-     */
-    getRailCurve() {
-        return this._railCurve
     }
 }

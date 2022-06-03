@@ -69,8 +69,8 @@ export default class Board {
             if (this._railARotationController.isReadyToChangeState()) {
                 this.clickRail(railId, direction, isShuffle)
             }
-            this.setIntersectionCoinsVisibility(Constants.RAIL_A, true)
-            this.setIntersectionCoinsVisibility(Constants.RAIL_B, false)
+            this._setIntersectionCoinsVisibility(Constants.RAIL_A, true)
+            this._setIntersectionCoinsVisibility(Constants.RAIL_B, false)
 
         } else {
             // RailB Moving, so hide RailA
@@ -78,8 +78,8 @@ export default class Board {
             if (this._railBRotationController.isReadyToChangeState()) {
                 this.clickRail(railId, direction, isShuffle)
             }
-            this.setIntersectionCoinsVisibility(Constants.RAIL_B, true)
-            this.setIntersectionCoinsVisibility(Constants.RAIL_A, false)
+            this._setIntersectionCoinsVisibility(Constants.RAIL_B, true)
+            this._setIntersectionCoinsVisibility(Constants.RAIL_A, false)
         }
     }
 
@@ -125,7 +125,7 @@ export default class Board {
      * @param {number} railId
      * @param {boolean} visible
      */
-    setIntersectionCoinsVisibility(railId = Constants.RAIL_A, visible = true) {
+    _setIntersectionCoinsVisibility(railId = Constants.RAIL_A, visible = true) {
         if (railId === Constants.RAIL_A) {
             this._railA.setIntersectionCoinsVisibility(visible)
         } else {
@@ -192,6 +192,8 @@ export default class Board {
     }
 
     /**
+     * If we moved railA, then we need to synchronise the data in railB and vice versa
+     * before drawing the sprites.
      * @param {number} railId
      */
     synchroniseRail(railId = Constants.RAIL_A) {
@@ -269,6 +271,8 @@ export default class Board {
     }
 
     /**
+     * Depending on the number of coins each rail on a board has, this will give us different
+     * intersection points on the rails.  So they are set at the board level.
      * @param railId
      * @param number
      * @returns {number}
@@ -304,26 +308,15 @@ export default class Board {
      * @returns {Rail}
      */
     _buildRail(railId = Constants.RAIL_A) {
-        let railBuilder = new RailBuilder()
+        let railBuilder = new RailBuilder(
+            this._getIntersectionIds(Constants.RAIL_A),
+            this._getIntersectionIds(Constants.RAIL_B)
+        )
 
         if (railId === Constants.RAIL_A) {
-            railBuilder.build(Constants.RAIL_A)
-
-            return new Rail(
-                railId,
-                railBuilder.getCoins(),
-                this._getIntersectionIds(Constants.RAIL_A),
-                railBuilder.getRailCurve()
-            )
+            return railBuilder.build(Constants.RAIL_A)
         } else {
-            railBuilder.build(Constants.RAIL_B)
-
-            return new Rail(
-                railId,
-                railBuilder.getCoins(),
-                this._getIntersectionIds(Constants.RAIL_B),
-                railBuilder.getRailCurve()
-            )
+            return railBuilder.build(Constants.RAIL_B)
         }
     }
 
