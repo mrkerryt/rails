@@ -1,10 +1,14 @@
-import Coin from './coin.js';
-import * as Constants from '../constants'
+import Coin from '../../src/js/entities/coin.js';
+import * as Constants from '../../src/js/constants'
 
 describe('Coin Object', () => {
     let coin
     beforeAll(() => {
         coin = new Coin(1, 2, 3)
+    })
+
+    test('Setting the number with the Constructor', () => {
+        expect(coin.getNumber()).toBe(1);
     })
 
     test('Setting the colour with the Constructor', () => {
