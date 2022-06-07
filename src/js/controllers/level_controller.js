@@ -27,20 +27,26 @@ export default class LevelController {
     }
 
     getLevelData() {
-        return {
+        let data = {
             1: {
                 name: 'Four Corners',
                 description: 'Move a red coin in to each of the 4 corners',
-                stars: this._getStars(1),
-                locked: false
             },
             2: {
                 name: 'Red Top',
                 description: 'Create a row of red coins along the top bar',
-                stars: this._getStars(2),
-                locked: this._isLevelLocked(2)
             }
         }
+
+        // Add how many stars the user has earned and if the level is locked
+        // from the saved data
+        const keys = Object.keys(data);
+        keys.forEach((key) => {
+            data[key].stars = this._getStars(parseInt(key))
+            data[key].locked = this._isLevelLocked(parseInt(key))
+        })
+
+        return data
     }
 
     /**
@@ -57,7 +63,8 @@ export default class LevelController {
     /**
      * Level unlocks when the previous level has been completed
      * (at least 1 star)
-     * @param levelId
+     * @param {number} levelId
+     * @returns {boolean}
      * @private
      */
     _isLevelLocked(levelId = 1) {
