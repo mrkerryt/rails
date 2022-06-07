@@ -1,7 +1,5 @@
 import * as Constants from '../constants'
 import RailBuilder from "./rail_builder";
-import Rail from "./rail";
-import RailRotationController from "../controllers/rail_rotation_controller";
 import Command from "./command"
 
 /**
@@ -11,25 +9,20 @@ import Command from "./command"
 export default class Board {
     /** @type {Rail} */
     _railA
-    _railARotationController
 
     /** @type {Rail} */
     _railB
-    _railBRotationController
 
     /** @type {Sequence} */
     _sequence
 
     /**
-     * @param {Sequence} shuffle
+     * @param {Sequence} shuffleSequence
      */
-    constructor(shuffle) {
-        this._sequence = shuffle
+    constructor(shuffleSequence) {
+        this._sequence = shuffleSequence
         this._railA = this._buildRail(Constants.RAIL_A)
-        this._railARotationController = new RailRotationController()
-
         this._railB = this._buildRail(Constants.RAIL_B)
-        this._railBRotationController = new RailRotationController()
     }
 
     /**
@@ -43,9 +36,9 @@ export default class Board {
         speed = Constants.ROTATION_SPEED
     ){
         if (railId === Constants.RAIL_A) {
-            this._railARotationController.rollback(speed)
+            this._railA.rollback(speed)
         } else {
-            this._railBRotationController.rollback(speed)
+            this._railB.rollback(speed)
         }
     }
 
@@ -65,8 +58,8 @@ export default class Board {
     ) {
         if (railId === Constants.RAIL_A) {
             // RailA Moving, so hide RailB
-            this._railARotationController.rotate(direction, speed)
-            if (this._railARotationController.isReadyToChangeState()) {
+            this._railA.rotate(direction, speed)
+            if (this._railA.isReadyToChangeState()) {
                 this.clickRail(railId, direction, isShuffle)
             }
             this._setIntersectionCoinsVisibility(Constants.RAIL_A, true)
@@ -74,8 +67,8 @@ export default class Board {
 
         } else {
             // RailB Moving, so hide RailA
-            this._railBRotationController.rotate(direction, speed)
-            if (this._railBRotationController.isReadyToChangeState()) {
+            this._railB.rotate(direction, speed)
+            if (this._railB.isReadyToChangeState()) {
                 this.clickRail(railId, direction, isShuffle)
             }
             this._setIntersectionCoinsVisibility(Constants.RAIL_B, true)
@@ -243,15 +236,15 @@ export default class Board {
     getRotationData(railId = Constants.RAIL_A) {
         if (railId === Constants.RAIL_A) {
             return {
-                state: this._railARotationController.getState(),
-                direction: this._railARotationController.getDirection(),
-                percentage: this._railARotationController.getPercentage()
+                state: this._railA.getState(),
+                direction: this._railA.getDirection(),
+                percentage: this._railA.getPercentage()
             }
         } else {
             return {
-                state: this._railBRotationController.getState(),
-                direction: this._railBRotationController.getDirection(),
-                percentage: this._railBRotationController.getPercentage()
+                state: this._railB.getState(),
+                direction: this._railB.getDirection(),
+                percentage: this._railB.getPercentage()
             }
         }
     }

@@ -1,4 +1,5 @@
 import * as Constants from '../constants'
+import RailRotationController from "../controllers/rail_rotation_controller";
 
 /**
  * Each board has two crossing rails of coins
@@ -9,6 +10,7 @@ export default class Rail {
     _intersections = []
     _curve
     _railId
+    _rotationController
 
     /**
      * IDs of the coins that intersect with the other rail, so we can hide
@@ -28,6 +30,7 @@ export default class Rail {
         this._coins = coins
         this._intersections = intersections
         this._curve = curve
+        this._rotationController = new RailRotationController()
     }
 
     _rotateClockWise() {
@@ -157,5 +160,54 @@ export default class Rail {
         for (let i = 0; i < positions.length; i++) {
             this.setCoinColourAtPosition(positions[i], colour)
         }
+    }
+
+    /**
+     * When you release the GUI the controller rotate the percentage
+     * back to 0%
+     * @param speed
+     */
+    rollback(speed = 1) {
+        this._rotationController.rollback(speed)
+    }
+
+    /**
+     * We are rotating the controller but the rail may not click over
+     * until the controller has moved 100%.  Percentage is used for
+     * animation lerping
+     * @param direction
+     * @param speed
+     */
+    rotate(direction = Constants.CLOCKWISE, speed = 1) {
+        this._rotationController.rotate(direction, speed)
+    }
+
+    /**
+     * Is the rail ready to rotate to the next state?
+     * @returns {boolean}
+     */
+    isReadyToChangeState() {
+        return this._rotationController.isReadyToChangeState()
+    }
+
+    /**
+     * @returns {number}
+     */
+    getState() {
+        return this._rotationController.getState()
+    }
+
+    /**
+     * @returns {number}
+     */
+    getPercentage() {
+        return this._rotationController.getPercentage()
+    }
+
+    /**
+     * @returns {number}
+     */
+    getDirection() {
+        return this._rotationController.getDirection()
     }
 }
