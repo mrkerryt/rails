@@ -26,7 +26,7 @@ export default class Board {
     }
 
     /**
-     * We were between two states so we have to animate back to the
+     * We were between two states, so we have to animate back to the
      * previous state before we took our finger off the button
      * @param railId
      * @param speed
@@ -60,7 +60,7 @@ export default class Board {
             // RailA Moving, so hide RailB
             this._railA.rotate(direction, speed)
             if (this._railA.isReadyToChangeState()) {
-                this.clickRail(railId, direction, isShuffle)
+                this.changeRailState(railId, direction, isShuffle)
             }
             this._setIntersectionCoinsVisibility(Constants.RAIL_A, true)
             this._setIntersectionCoinsVisibility(Constants.RAIL_B, false)
@@ -69,7 +69,7 @@ export default class Board {
             // RailB Moving, so hide RailA
             this._railB.rotate(direction, speed)
             if (this._railB.isReadyToChangeState()) {
-                this.clickRail(railId, direction, isShuffle)
+                this.changeRailState(railId, direction, isShuffle)
             }
             this._setIntersectionCoinsVisibility(Constants.RAIL_B, true)
             this._setIntersectionCoinsVisibility(Constants.RAIL_A, false)
@@ -82,25 +82,17 @@ export default class Board {
      * @param {number} direction
      * @param {boolean} isShuffle
      */
-    clickRail(
+    changeRailState(
         railId = Constants.RAIL_A,
         direction = Constants.CLOCKWISE,
         isShuffle = false
     ) {
         if (railId === Constants.RAIL_A) {
-            if (direction === Constants.CLOCKWISE) {
-                this._railA._rotateClockWise()
-            } else {
-                this._railA._rotateAntiClockWise()
-            }
+            this._railA.changeState(direction)
             this.synchroniseRail(Constants.RAIL_B)
 
         } else {
-            if (direction === Constants.CLOCKWISE) {
-                this._railB._rotateClockWise()
-            } else {
-                this._railB._rotateAntiClockWise()
-            }
+            this._railB.changeState(direction)
             this.synchroniseRail(Constants.RAIL_A)
         }
 
@@ -228,27 +220,7 @@ export default class Board {
             )
         }
     }
-
-    /**
-     * @param {number} railId
-     * @returns {{percentage: number, state: *, direction: (number|*)}}
-     */
-    getRotationData(railId = Constants.RAIL_A) {
-        if (railId === Constants.RAIL_A) {
-            return {
-                state: this._railA.getState(),
-                direction: this._railA.getDirection(),
-                percentage: this._railA.getPercentage()
-            }
-        } else {
-            return {
-                state: this._railB.getState(),
-                direction: this._railB.getDirection(),
-                percentage: this._railB.getPercentage()
-            }
-        }
-    }
-
+    
     /**
      * @param railId
      * @returns {number[]}

@@ -33,6 +33,17 @@ export default class Rail {
         this._rotationController = new RailRotationController()
     }
 
+    /**
+     * @param {number} direction
+     */
+    changeState(direction) {
+        if (direction === Constants.CLOCKWISE) {
+            this._rotateClockWise()
+        } else {
+            this._rotateAntiClockWise()
+        }
+    }
+
     _rotateClockWise() {
         let colours = this._getColoursSnapshot();
         let previousCoinId

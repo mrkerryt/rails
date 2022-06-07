@@ -44,6 +44,20 @@ export default class Coin {
     }
 
     /**
+     * @returns {number}
+     */
+    getInitialX() {
+        return this._x
+    }
+
+    /**
+     * @returns {number}
+     */
+    getInitialY() {
+        return this._y
+    }
+
+    /**
      * @param {string} colour
      */
     setColour(colour) {

@@ -41,7 +41,9 @@ export default class CircleRenderer {
                 y,
                 coinSize,
                 colour
-            );
+            ).setInteractive({
+                useHandCursor: true
+            })
         }
         return rail[coinNumber]
     }

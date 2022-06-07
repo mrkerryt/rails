@@ -18,6 +18,9 @@ export default class Game extends Phaser.Scene {
     _eventsCenter
     _levelsController
     _circleRenderer
+    _isDragging
+    _draggedRailID
+    _draggedRailDirection
 
     constructor() {
         super('Game');
@@ -41,6 +44,10 @@ export default class Game extends Phaser.Scene {
         )
 
         this._eventsCenter.on('quit-game', this.quitGame, this)
+
+        this._isDragging = false
+        this._draggedRailID = null
+        this._draggedRailDirection = null
 
         this._cursors = this.input.keyboard.createCursorKeys();
         this._coinSize = (window.screen.availHeight * 0.02)
@@ -93,6 +100,9 @@ export default class Game extends Phaser.Scene {
     }
 
     playing() {
+        /**
+         * Rail A
+         */
         if (this._cursors.right.isDown) {
             this._board.rotateRail(Constants.RAIL_A, Constants.CLOCKWISE, Constants.ROTATION_SPEED)
 
@@ -103,6 +113,9 @@ export default class Game extends Phaser.Scene {
             this._board.rollback(Constants.RAIL_A, Constants.ROTATION_SPEED)
         }
 
+        /**
+         * Rail B
+         */
         if (this._cursors.up.isDown) {
             this._board.rotateRail(Constants.RAIL_B, Constants.CLOCKWISE, Constants.ROTATION_SPEED)
 
@@ -113,13 +126,35 @@ export default class Game extends Phaser.Scene {
             this._board.rollback(Constants.RAIL_B, Constants.ROTATION_SPEED)
         }
 
+
+        /**
+         * Check any puzzle events such as matching corners
+         */
         if (this._puzzle.isActionable(this._board)) {
             this._puzzle.doAction(this._board, this)
         }
 
+        /**
+         * Now check if puzzle is fully solved
+         */
         if (this._puzzle.isSolved(this._board)) {
             this._state = Constants.SOLVED
         }
+    }
+
+    /**
+     * When you click down on a coin this method gets fired which
+     * can start the drag operation
+     * @param {number} railId
+     * @param {number} initialX
+     * @param {number} initialY
+     */
+    dragRail(railId, initialX, initialY) {
+        this._isDragging = true
+        this._draggedRailID = railId
+
+        // When released, rollback whatever rail it is
+        this._draggedRailDirection = Constants.CLOCKWISE
     }
 
     /**
@@ -172,31 +207,13 @@ export default class Game extends Phaser.Scene {
         if (command === false) {
             this._state = Constants.PLAYING
         } else {
-            if (command.getRailId() === Constants.RAIL_A) {
-                this._board.rotateRail(Constants.RAIL_A, command.getDirection(), speed, true)
-            } else {
-                this._board.rotateRail(Constants.RAIL_B, command.getDirection(), speed, true)
-            }
+            this._board.rotateRail(command.getRailId(), command.getDirection(), speed, true)
         }
     }
 
     drawBoard() {
-        let rotationData
-        rotationData = this._board.getRotationData(Constants.RAIL_A)
-        this.drawRail(
-            this._railA,
-            rotationData.state,
-            rotationData.direction,
-            rotationData.percentage
-        )
-
-        rotationData = this._board.getRotationData(Constants.RAIL_B)
-        this.drawRail(
-            this._railB,
-            rotationData.state,
-            rotationData.direction,
-            rotationData.percentage
-        )
+        this.drawRail(this._railA)
+        this.drawRail(this._railB)
     }
 
     /**
@@ -227,25 +244,17 @@ export default class Game extends Phaser.Scene {
 
     /**
      * @param {Rail} rail
-     * @param {number} state
-     * @param {number} direction
-     * @param {number} percentage
      */
-    drawRail(
-        rail,
-        state = Constants.REST,
-        direction = Constants.CLOCKWISE,
-        percentage= 0
-    ) {
-        if (direction == null) {
-            state = Constants.REST
-            direction = Constants.CLOCKWISE
-            percentage = 0
-        }
-
+    drawRail(rail) {
         let coins = rail.getCoins()
         for (let i = 0; i < coins.length; i++) {
-            this.drawCoin(rail.getRailId(), coins[i], state, direction, percentage)
+            this.drawCoin(
+                rail.getRailId(),
+                coins[i],
+                rail.getState(),
+                rail.getDirection(),
+                rail.getPercentage()
+            )
         }
     }
 
@@ -270,6 +279,9 @@ export default class Game extends Phaser.Scene {
 
         let circle = this._circleRenderer
             .findOrCreateCircle(railId, coin.getNumber(), x, y, this._coinSize, colour)
+            .on('pointerdown', () => {
+                this.dragRail(railId, coin.getInitialX(), coin.getInitialY())
+            })
 
         this._circleRenderer
             .updateCircle(circle, x, y, this._coinSize, colour, visibility)
