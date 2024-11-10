@@ -126,7 +126,6 @@ export default class Game extends Phaser.Scene {
             this._board.rollback(Constants.RAIL_B, Constants.ROTATION_SPEED)
         }
 
-
         /**
          * Check any puzzle events such as matching corners
          */
